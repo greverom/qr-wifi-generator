@@ -1,33 +1,31 @@
-import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 
-import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from "@/components/qr-generator/theme-provider"
+import { Toaster } from "sonner" // ✅ Importa el Toaster de sonner
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "WiFi QR Code Generator",
-  description: "Generate QR codes for WiFi networks",
+  description: "Genera códigos QR para redes WiFi fácilmente",
   manifest: "/manifest.json",
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           {children}
-          <Toaster />
+          <Toaster richColors position="top-center" /> 
         </ThemeProvider>
       </body>
     </html>
   )
 }
-

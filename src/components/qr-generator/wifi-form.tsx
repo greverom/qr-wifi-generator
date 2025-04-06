@@ -1,7 +1,7 @@
 "use client"
 
-import type React from "react"
 import { useState } from "react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -9,12 +9,10 @@ import { Label } from "@/components/ui/label"
 import { Wifi } from "lucide-react"
 import { QrGenerator } from "./qr-generator"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { toast } from "@/hooks/use.toast"
-
 
 type TipoSeguridad = "WEP" | "WPA" | "nopass"
 
-interface DatosWifi {
+type DatosWifi = {
   ssid: string
   password: string
   security: TipoSeguridad
@@ -44,29 +42,17 @@ export function WifiForm() {
     e.preventDefault()
 
     if (!datosWifi.ssid.trim()) {
-      toast({
-        title: "Campo requerido",
-        description: "El nombre de la red (SSID) es obligatorio.",
-        variant: "destructive",
-      })
+      toast.error("El nombre de la red (SSID) es obligatorio.")
       return
     }
 
     if (datosWifi.security !== "nopass" && !datosWifi.password.trim()) {
-      toast({
-        title: "Campo requerido",
-        description: "La contraseña es obligatoria para redes con seguridad.",
-        variant: "destructive",
-      })
+      toast.error("La contraseña es obligatoria para redes con seguridad.")
       return
     }
 
     setQrGenerado(true)
-
-    toast({
-      title: "QR generado",
-      description: "El código QR ha sido generado exitosamente.",
-    })
+    toast.success("El código QR ha sido generado exitosamente.")
   }
 
   const necesitaPassword = datosWifi.security !== "nopass"
@@ -90,11 +76,9 @@ export function WifiForm() {
               value={datosWifi.ssid}
               onChange={handleChange}
               placeholder="Ingresa el nombre de la red"
-              required
             />
           </div>
 
-          {/* Seguridad */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">Tipo de seguridad</Label>
             <RadioGroup
@@ -102,54 +86,35 @@ export function WifiForm() {
               onValueChange={(value) => handleSecurityChange(value as TipoSeguridad)}
               className="flex flex-col gap-3 pt-1"
             >
-              {/* WPA */}
               <div className="flex items-center space-x-3">
                 <RadioGroupItem
                   value="WPA"
                   id="wpa"
-                  className="h-5 w-5 rounded-full border border-muted-foreground 
-                  peer-checked:border-primary 
-                  peer-checked:ring-2 peer-checked:ring-primary 
-                  flex items-center justify-center transition"
+                  className="h-5 w-5 rounded-full border border-muted-foreground peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary transition"
                 />
-                <Label htmlFor="wpa" className="cursor-pointer">
-                  WPA/WPA2
-                </Label>
+                <Label htmlFor="wpa" className="cursor-pointer">WPA/WPA2</Label>
               </div>
 
-              {/* WEP */}
               <div className="flex items-center space-x-3">
                 <RadioGroupItem
                   value="WEP"
                   id="wep"
-                  className="h-5 w-5 rounded-full border border-muted-foreground 
-                  peer-checked:border-primary 
-                  peer-checked:ring-2 peer-checked:ring-primary 
-                  flex items-center justify-center transition"
+                  className="h-5 w-5 rounded-full border border-muted-foreground peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary transition"
                 />
-                <Label htmlFor="wep" className="cursor-pointer">
-                  WEP
-                </Label>
+                <Label htmlFor="wep" className="cursor-pointer">WEP</Label>
               </div>
 
-              {/* Sin contraseña */}
               <div className="flex items-center space-x-3">
                 <RadioGroupItem
                   value="nopass"
                   id="nopass"
-                  className="h-5 w-5 rounded-full border border-muted-foreground 
-                  peer-checked:border-primary 
-                  peer-checked:ring-2 peer-checked:ring-primary 
-                  flex items-center justify-center transition"
+                  className="h-5 w-5 rounded-full border border-muted-foreground peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary transition"
                 />
-                <Label htmlFor="nopass" className="cursor-pointer">
-                  Sin contraseña
-                </Label>
+                <Label htmlFor="nopass" className="cursor-pointer">Sin contraseña</Label>
               </div>
             </RadioGroup>
           </div>
 
-          {/* Contraseña (si aplica) */}
           {necesitaPassword && (
             <div className="space-y-2">
               <Label htmlFor="password">Contraseña</Label>
@@ -160,14 +125,13 @@ export function WifiForm() {
                 value={datosWifi.password}
                 onChange={handleChange}
                 placeholder="Ingresa la contraseña"
-                required={necesitaPassword}
               />
             </div>
           )}
         </CardContent>
 
         <CardFooter className="flex flex-col py-8">
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full py-5">
             Generar código QR
           </Button>
 
