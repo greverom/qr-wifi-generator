@@ -13,24 +13,27 @@ interface WifiData {
 }
 
 interface QrGeneratorProps {
-  wifiData: WifiData
+  wifiData?: WifiData
+  value?: string
 }
 
-export function QrGenerator({ wifiData }: QrGeneratorProps) {
+export function QrGenerator({ wifiData, value }: QrGeneratorProps) {
   const [qrValue, setQrValue] = useState("")
 
   useEffect(() => {
-    // Format according to WiFi QR code standard
-    // WIFI:S:<SSID>;T:<WEP|WPA|nopass>;P:<password>;;
-    const { ssid, password, security } = wifiData
+    if (value) {
+      setQrValue(value)
+      return
+    }
 
-    // Escape special characters in SSID and password
-    const escapedSsid = ssid.replace(/[;:,\\]/g, "\\$&")
-    const escapedPassword = password.replace(/[;:,\\]/g, "\\$&")
-
-    const qrString = `WIFI:S:${escapedSsid};T:${security};P:${escapedPassword};;`
-    setQrValue(qrString)
-  }, [wifiData])
+    if (wifiData) {
+      const { ssid, password, security } = wifiData
+      const escapedSsid = ssid.replace(/[;:,\\]/g, "\\$&")
+      const escapedPassword = password.replace(/[;:,\\]/g, "\\$&")
+      const wifiQr = `WIFI:S:${escapedSsid};T:${security};P:${escapedPassword};;`
+      setQrValue(wifiQr)
+    }
+  }, [wifiData, value])
 
   const handleDownload = () => {
     const svg = document.getElementById("wifi-qr-code")
@@ -47,9 +50,8 @@ export function QrGenerator({ wifiData }: QrGeneratorProps) {
       ctx?.drawImage(img, 0, 0)
       const pngFile = canvas.toDataURL("image/png")
 
-      // Download the PNG file
       const downloadLink = document.createElement("a")
-      downloadLink.download = `wifi-${wifiData.ssid}.png`
+      downloadLink.download = "qr-code.png"
       downloadLink.href = pngFile
       downloadLink.click()
     }
@@ -64,9 +66,8 @@ export function QrGenerator({ wifiData }: QrGeneratorProps) {
       </div>
       <Button onClick={handleDownload} variant="outline" className="flex items-center gap-2">
         <Download className="h-4 w-4" />
-        Download QR Code
+        Descargar QR
       </Button>
     </Card>
   )
 }
-
